@@ -86,7 +86,6 @@ def main():
         with open(args.branch_refs, 'r') as branch_refs_file:
           for line in branch_refs_file:
             repo, branch = line.strip().split(',')
-            assert len(repo.split('/')) == 2, 'repo name should be org/repo, but is {}'.format(repo)
             branch_refs[repo] = branch
       except FileNotFoundError:
         raise Exception('branch_refs file {} not found'.format(args.branch_refs))
