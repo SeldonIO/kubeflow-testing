@@ -52,7 +52,7 @@ parser.add_argument(
   dest='branch_refs',
   help=
   'Optional file with each line specifying the branch ref separated by a comma.'
-  +'Format: org/repo,branch_name. e.g. SeldonIO/seldon-core,v2.',
+  +'Format: org/repo,branch_name. e.g. seldonio/seldon-core,v2.',
 )
 args = parser.parse_args()
 
