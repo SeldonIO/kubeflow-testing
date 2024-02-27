@@ -47,6 +47,13 @@ parser.add_argument(
   +'text file with one line. '
   +'"<40 characters string shown when a new personal access token is created>"'
 )
+parser.add_argument(
+  '--branch-refs',
+  dest='branch_refs',
+  help=
+  'Optional file with each line specifying the branch ref separated by a comma.'
+  +'Format: org/repo,branch_name. e.g. SeldonIO/seldon-core,v2.',
+)
 args = parser.parse_args()
 
 
@@ -69,16 +76,30 @@ def main():
   assert len(token) == 40
   # reference: https://developer.github.com/v3/#oauth2-token-sent-in-a-header
   headers = {'Authorization': 'token {}'.format(token)}
-  with open(args.repo_list,
-          'r') as repo_list_file, open(args.output_file,
-                                          'w') as output_file:
+  with (
+    open(args.repo_list,'r') as repo_list_file,
+    open(args.output_file,'w') as output_file
+  ):
+    if args.branch_refs:
+      branch_refs = {}
+      try:
+        with open(args.branch_refs, 'r') as branch_refs_file:
+          for line in branch_refs_file:
+            repo, branch = line.strip().split(',')
+            assert len(repo.split('/')) == 2, 'repo name should be org/repo, but is {}'.format(repo)
+            branch_refs[repo] = branch
+      except FileNotFoundError:
+        raise Exception('branch_refs file {} not found'.format(args.branch_refs))
     repo_succeeded = []
     repo_failed = []
     for repo in repo_list_file:
       repo = repo.strip()
       print('Fetching license for {}'.format(repo), file=sys.stderr)
-      try:
+      if args.branch_refs and repo in branch_refs:
+        url = 'https://api.github.com/repos/{}/license?ref={}'.format(repo, branch_refs[repo])
+      else:
         url = 'https://api.github.com/repos/{}/license'.format(repo)
+      try:
         response = requests.get(url, headers=headers)
         if not response.ok:
           print('Error response content:\n{}'.format(response.content), file=sys.stderr)
