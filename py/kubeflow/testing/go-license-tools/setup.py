@@ -15,7 +15,7 @@
 from setuptools import setup
 
 NAME = 'go-license-tools'
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 REQUIRES = [
     'bs4',

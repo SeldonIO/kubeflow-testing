@@ -83,6 +83,11 @@ $ python <license_tool>/setup.py install
     doesn't have a github understandable license file. Check its readme and
     update correct info into `license-info.csv`. (Usually, use its README file which mentions license.)
 
+    Optionally, provide a file with branch references if you would like to point to a specific branch of the repository. (e.g. `seldonio/seldon-core,v2`)
+    ```
+    $ python <license_tool>/get_github_license_info.py --github-api-token-file=<github_token_file> --branch-refs=<branch_refs_file>
+    ```
+
 2. Fill in missing license information. If you open `license_info.csv`, you can see some fields are marked as `Other`. We have to update them to the right license types. First we need to grep all these unknown license URLs:
     ```
     $ cat license_info.csv | grep Other | cut -d ',' -f 2
